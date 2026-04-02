@@ -5,8 +5,6 @@ const connectDB = require('./config/db');
 
 dotenv.config();
 
-connectDB();
-
 const app = express();
 
 app.use(express.json());
@@ -38,6 +36,12 @@ const medicine = require('./routes/medicineRoutes');
 const caretaker = require('./routes/caretakerRoutes');
 const ai = require('./routes/aiRoutes');
 const admin = require('./routes/adminRoutes');
+
+// Ensure database connection before routing requests (Crucial for Vercel Serverless)
+app.use(async (req, res, next) => {
+    await connectDB();
+    next();
+});
 
 app.use('/api/auth', auth);
 app.use('/api/medicine', medicine);
