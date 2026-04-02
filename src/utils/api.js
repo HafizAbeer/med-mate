@@ -4,8 +4,7 @@ import axios from "axios";
 const DEV_RELATIVE_API = "/api";
 const LOCAL_DIRECT_API = "http://localhost:5000/api";
 /** Production API (Vercel); override with VITE_API_URL on your host. */
-const PRODUCTION_API =
-  "https://med-mate-lqkw-git-main-hafiz-abeers-projects.vercel.app/api";
+const PRODUCTION_API = "https://med-mate-lqkw.vercel.app/api";
 
 function resolveBaseURL() {
   if (import.meta.env.VITE_API_URL) {
