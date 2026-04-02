@@ -1,7 +1,12 @@
 import axios from 'axios';
 
-/** Backend base URL — set VITE_API_URL in root `.env` (e.g. production API). Default matches `backend/server.js` (PORT 5000). */
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const LOCAL_API = 'http://localhost:5000/api';
+/** Production API (Vercel); override anytime with VITE_API_URL in `.env` or hosting env. */
+const PRODUCTION_API = 'https://med-mate-lqkw.vercel.app/api';
+
+const baseURL =
+    import.meta.env.VITE_API_URL ||
+    (import.meta.env.DEV ? LOCAL_API : PRODUCTION_API);
 
 const API = axios.create({
     baseURL,
