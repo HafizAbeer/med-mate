@@ -12,7 +12,14 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+// CORS: set FRONTEND_URL in production (e.g. https://your-app.vercel.app) — comma-separated for multiple origins
+let corsOrigin = true;
+if (process.env.FRONTEND_URL) {
+    const list = process.env.FRONTEND_URL.split(',').map((o) => o.trim()).filter(Boolean);
+    corsOrigin = list.length === 1 ? list[0] : list;
+}
+app.use(cors({ origin: corsOrigin }));
 
 // Route files
 const auth = require('./routes/authRoutes');
