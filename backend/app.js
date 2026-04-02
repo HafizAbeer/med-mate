@@ -11,12 +11,27 @@ const app = express();
 
 app.use(express.json());
 
-let corsOrigin = true;
+// CORS Configuration
+// It securely reads FRONTEND_URL, strips trailing slashes to prevent CORS mismatches, 
+// and defaults to allowing all origins (true) for local development if not provided.
+let corsOptions = {
+    origin: true, // Default to true (reflects request origin)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    exposedHeaders: ['Content-Type'],
+    optionsSuccessStatus: 204,
+};
+
 if (process.env.FRONTEND_URL) {
-    const list = process.env.FRONTEND_URL.split(',').map((o) => o.trim()).filter(Boolean);
-    corsOrigin = list.length === 1 ? list[0] : list;
+    const allowedOrigins = process.env.FRONTEND_URL
+        .split(',')
+        .map((url) => url.trim().replace(/\/+$/, '')) // Removetrailing slashes!
+        .filter(Boolean);
+
+    corsOptions.origin = allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins;
 }
-app.use(cors({ origin: corsOrigin }));
+
+app.use(cors(corsOptions));
 
 const auth = require('./routes/authRoutes');
 const medicine = require('./routes/medicineRoutes');
@@ -29,6 +44,10 @@ app.use('/api/medicine', medicine);
 app.use('/api/caretaker', caretaker);
 app.use('/api/ai', ai);
 app.use('/api/admin', admin);
+
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ ok: true, service: 'med-mate-api' });
+});
 
 app.get('/', (req, res) => {
     res.send('Med-Mate API is running...');

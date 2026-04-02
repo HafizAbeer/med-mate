@@ -95,4 +95,14 @@ If unset, CORS stays permissive for development (`origin: true`).
 
 ## Monorepo note
 
-- Deploying **only the repo root** on Vercel builds the **Vite app**; it does **not** deploy Express unless you add a separate project with **Root Directory = `backend`**.
+- Deploying **only** the repo root on Vercel builds the **Vite app**; it does **not** deploy Express unless you add a separate project with **Root Directory = `backend`**.
+
+---
+
+## Troubleshooting: frontend cannot call the API (CORS / blocked)
+
+1. **Redeploy the backend** so the latest `backend/app.js` is live — CORS uses **`origin: true`** (any browser origin can call the API; auth is still JWT).
+2. Open **`https://<your-backend>.vercel.app/api/health`** — you should see `{"ok":true,"service":"med-mate-api"}`. If not, the API project is wrong or MongoDB failed (check Vercel **Functions** logs).
+3. **Browser DevTools → Network**: login should request **`https://<backend>.vercel.app/api/auth/login`** (path includes **`/api`**).
+4. **Local `npm run dev`**: default is **Vite proxy** — requests go to **`/api/...`** on the dev server and forward to **`https://med-mate-lqkw.vercel.app`** (no CORS in the browser). To use **local** Express instead, create `.env` with **`VITE_DEV_USE_LOCAL_API=1`**.
+5. **Frontend on Vercel**: production build uses the URL in **`src/utils/api.js`** (`PRODUCTION_API`) unless you set **`VITE_API_URL`** in the Vercel project env.
