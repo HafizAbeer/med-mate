@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Medicine = require('../models/Medicine');
+const MedicineLog = require('../models/MedicineLog');
 
 async function userCanAccessMedicine(req, medicine) {
     const ownerId = medicine.user.toString();
@@ -110,6 +111,19 @@ exports.updateMedicine = async (req, res) => {
             runValidators: true
         });
 
+        // Create log if status changed to Taken
+        if (req.body.status === 'Taken') {
+            await MedicineLog.create({
+                user: medicine.user,
+                medicine: medicine._id,
+                medicineName: medicine.name,
+                status: 'Taken',
+                time: medicine.time,
+                dosage: medicine.dosage,
+                date: new Date()
+            });
+        }
+
         res.status(200).json({ success: true, data: medicine });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -139,3 +153,23 @@ exports.deleteMedicine = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+// @desc    Get medicine history
+// @route   GET /api/medicine/history
+// @access  Private
+exports.getHistory = async (req, res) => {
+    try {
+        let query = { user: req.user.id };
+
+        // If caretaker, they might want history for a specific patient
+        if (req.user.role === 'caretaker' && req.query.patientId) {
+            query = { user: req.query.patientId };
+        }
+
+        const logs = await MedicineLog.find(query).sort({ date: -1 });
+        res.status(200).json({ success: true, count: logs.length, data: logs });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+

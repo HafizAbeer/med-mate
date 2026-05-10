@@ -253,6 +253,8 @@ export const LanguageProvider = ({ children }) => {
             resetCodeLabel: 'Reset code',
             resetPasswordBtn: 'Reset password',
             invalidResetCode: 'Invalid or expired code',
+            today: 'Today',
+            yesterday: 'Yesterday',
         },
         ur: {
             appName: 'میڈ میٹ',
@@ -470,6 +472,8 @@ export const LanguageProvider = ({ children }) => {
             resetCodeLabel: 'ری سیٹ کوڈ',
             resetPasswordBtn: 'پاس ورڈ ری سیٹ',
             invalidResetCode: 'کوڈ غلط یا ختم',
+            today: 'آج',
+            yesterday: 'کل',
         },
     };
 

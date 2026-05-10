@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import API from "../utils/api";
+import { formatTime } from "../utils/formatTime";
 import clsx from "clsx";
 import {
   LayoutDashboard,
@@ -264,7 +265,7 @@ const AdminDashboard = () => {
                             >
                               <td className="px-4 py-2.5 font-semibold text-slate-800">{m.name}</td>
                               <td className="px-4 py-2.5 text-slate-600">{m.dosage || "—"}</td>
-                              <td className="px-4 py-2.5 text-slate-600 tabular-nums">{m.time || "—"}</td>
+                              <td className="px-4 py-2.5 text-slate-600 tabular-nums">{m.time ? formatTime(m.time) : "—"}</td>
                               <td className="px-4 py-2.5 text-slate-600">{m.type || "—"}</td>
                               <td className="px-4 py-2.5">
                                 <span
@@ -292,7 +293,7 @@ const AdminDashboard = () => {
                               {t.medDosage}: <span className="text-slate-700">{m.dosage || "—"}</span>
                             </span>
                             <span>
-                              {t.medTime}: <span className="text-slate-700 tabular-nums">{m.time || "—"}</span>
+                              {t.medTime}: <span className="text-slate-700 tabular-nums">{m.time ? formatTime(m.time) : "—"}</span>
                             </span>
                             {m.type && (
                               <span>

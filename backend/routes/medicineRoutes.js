@@ -1,17 +1,17 @@
 const express = require('express');
-const { getMedicines, addMedicine, updateMedicine, deleteMedicine } = require('../controllers/medicineController');
+const { getMedicines, addMedicine, updateMedicine, deleteMedicine, getHistory } = require('../controllers/medicineController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.use(protect);
 router.use(authorize('patient', 'caretaker'));
 
-router.route('/')
-    .get(getMedicines)
-    .post(addMedicine);
+router.get('/', getMedicines);
+router.post('/', addMedicine);
 
-router.route('/:id')
-    .put(updateMedicine)
-    .delete(deleteMedicine);
+router.get('/history', getHistory);
+
+router.put('/:id', updateMedicine);
+router.delete('/:id', deleteMedicine);
 
 module.exports = router;

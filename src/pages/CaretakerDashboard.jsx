@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import API from "../utils/api";
+import { formatTime } from "../utils/formatTime";
 import { useSearchParams } from "react-router-dom";
 import { Pill, Activity, User, Phone, Calendar, Plus } from "lucide-react";
 import { isValidPhoneNumber } from "libphonenumber-js";
@@ -190,7 +191,7 @@ const CaretakerDashboard = () => {
   const totalMeds = medicines.length;
   const adherence = totalMeds > 0 ? Math.round((completedMeds / totalMeds) * 100) : 0;
   const upcomingMeds = medicines.filter((m) => m.status === "pending");
-  const nextDose = upcomingMeds.length > 0 ? upcomingMeds[0].time : "--:--";
+  const nextDose = upcomingMeds.length > 0 ? formatTime(upcomingMeds[0].time) : "--:--";
 
   const callHref =
     selectedPatient?.phoneNumber &&
@@ -487,7 +488,7 @@ const CaretakerDashboard = () => {
                     </h3>
                     <div className="flex items-center gap-3 text-slate-500 mt-2 font-bold text-sm flex-wrap">
                       <Calendar size={16} className="text-primary-500 shrink-0" />
-                      <span className="bg-slate-100 px-2 py-0.5 rounded text-xs">{med.time}</span>
+                      <span className="bg-slate-100 px-2 py-0.5 rounded text-xs">{formatTime(med.time)}</span>
                       <span className="text-slate-200 hidden sm:inline">|</span>
                       <span>{med.dosage}</span>
                     </div>

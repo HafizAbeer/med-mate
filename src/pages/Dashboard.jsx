@@ -3,6 +3,7 @@ import { useLanguage } from "../context/LanguageContext";
 import { useAuth } from "../context/AuthContext";
 import API from "../utils/api";
 import MedicineCard from "../components/MedicineCard";
+import { formatTime } from "../utils/formatTime";
 import { CalendarDays, Bell, User } from "lucide-react";
 
 const Dashboard = () => {
@@ -80,7 +81,7 @@ const Dashboard = () => {
                 {t.nextDose}
               </p>
               <p className="font-bold text-slate-800 text-lg">
-                {upcomingMeds.length > 0 ? upcomingMeds[0].time : "--:--"}
+                {upcomingMeds.length > 0 ? formatTime(upcomingMeds[0].time) : "--:--"}
               </p>
             </div>
           </div>

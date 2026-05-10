@@ -2,6 +2,7 @@ import React from "react";
 import { Clock, CheckCircle, AlertCircle, Pill, Volume2 } from "lucide-react";
 import clsx from "clsx";
 import { useLanguage } from "../context/LanguageContext";
+import { formatTime } from "../utils/formatTime";
 import { useVoice } from "../context/VoiceContext";
 
 const MedicineCard = ({ medicine, onTake }) => {
@@ -48,7 +49,7 @@ const MedicineCard = ({ medicine, onTake }) => {
           </h3>
           <div className="flex items-center gap-2 text-slate-500 mt-1.5 text-sm font-medium">
             <Clock size={16} className="text-primary-500" />
-            <span>{medicine.time}</span>
+            <span>{formatTime(medicine.time)}</span>
             <span className="text-slate-400 px-1">•</span>
             <span>{medicine.dosage}</span>
           </div>
