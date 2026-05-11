@@ -59,13 +59,7 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User'
     },
-    pushSubscriptions: [{
-        endpoint: String,
-        keys: {
-            p256dh: String,
-            auth: String
-        }
-    }],
+    fcmTokens: [String],
     createdAt: {
         type: Date,
         default: Date.now

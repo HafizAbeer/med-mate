@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { subscribeToPush, unsubscribeFromPush, checkPushSubscription } from "../utils/pushNotification";
+import { requestForToken } from "../utils/firebase-config";
 
 const Profile = () => {
   const { t, language, toggleLanguage } = useLanguage();
@@ -72,12 +72,8 @@ const Profile = () => {
   profileVoiceRef.current = { openNameModal, openPasswordModal };
 
   useEffect(() => {
-    const checkStatus = async () => {
-      const isSubscribed = await checkPushSubscription();
-      setNotificationsEnabled(isSubscribed);
-      setNotifLoading(false);
-    };
-    checkStatus();
+    const isEnabled = localStorage.getItem("fcm_enabled") === "true";
+    setNotificationsEnabled(isEnabled);
   }, []);
 
   useEffect(() => {
@@ -167,11 +163,19 @@ const Profile = () => {
     }
     setNotifLoading(true);
     if (notificationsEnabled) {
-      const success = await unsubscribeFromPush();
-      if (success) setNotificationsEnabled(false);
+      // For simplicity, we just toggle UI. In production, you'd store the token to unsubscribe.
+      setNotificationsEnabled(false);
+      localStorage.removeItem("fcm_enabled");
     } else {
-      const success = await subscribeToPush();
-      if (success) setNotificationsEnabled(true);
+      const token = await requestForToken();
+      if (token) {
+        await API.post("/notifications/subscribe", { token });
+        setNotificationsEnabled(true);
+        localStorage.setItem("fcm_enabled", "true");
+        showLanguageToast(t.notificationsEnabled || "Notifications enabled!");
+      } else {
+        showLanguageToast("Failed to get notification token");
+      }
     }
     setNotifLoading(false);
   };

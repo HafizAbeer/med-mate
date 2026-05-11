@@ -16,6 +16,7 @@
     "axios": "^1.13.6",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "firebase": "^12.13.0",
     "framer-motion": "^12.23.26",
     "libphonenumber-js": "^1.12.39",
     "lucide-react": "^0.562.0",
