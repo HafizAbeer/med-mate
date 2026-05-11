@@ -161,6 +161,10 @@ const Profile = () => {
   };
 
   const handleToggleNotifications = async () => {
+    if (!("Notification" in window)) {
+      showLanguageToast("This browser does not support desktop notifications");
+      return;
+    }
     setNotifLoading(true);
     if (notificationsEnabled) {
       const success = await unsubscribeFromPush();
@@ -196,14 +200,18 @@ const Profile = () => {
         )}
         {isToggle ? (
           <div
-            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${
+            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 relative ${
               notificationsEnabled ? "bg-primary-500" : "bg-slate-300"
-            }`}
+            } ${notifLoading ? "opacity-50 pointer-events-none" : ""}`}
           >
-            <motion.div
-              animate={{ x: notificationsEnabled ? 24 : 0 }}
-              className="w-4 h-4 bg-white rounded-full shadow-sm"
-            />
+            {notifLoading ? (
+              <Loader2 size={12} className="text-white animate-spin absolute inset-0 m-auto" />
+            ) : (
+              <motion.div
+                animate={{ x: notificationsEnabled ? 24 : 0 }}
+                className="w-4 h-4 bg-white rounded-full shadow-sm"
+              />
+            )}
           </div>
         ) : (
           <ChevronRight size={18} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
