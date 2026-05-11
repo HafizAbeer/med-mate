@@ -189,7 +189,9 @@ const Profile = () => {
       className="w-full flex items-center justify-between p-5 hover:bg-white/40 transition-all duration-300 group rounded-2xl mb-2 last:mb-0 text-left"
     >
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-white/50 rounded-xl text-primary-600 shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3">
+        <div className={`p-3 rounded-xl shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3 ${
+          isToggle && !notificationsEnabled ? "bg-slate-100 text-slate-400" : "bg-white/50 text-primary-600"
+        }`}>
           <Icon size={22} />
         </div>
         <span className="font-semibold text-slate-700 tracking-tight">{label}</span>

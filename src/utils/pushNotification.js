@@ -25,6 +25,12 @@ export const subscribeToPush = async () => {
     const registration = await navigator.serviceWorker.register('/sw.js');
     await navigator.serviceWorker.ready;
 
+    // Explicitly request permission
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      throw new Error('Permission not granted for notifications');
+    }
+
     let subscription = await registration.pushManager.getSubscription();
 
     if (!subscription) {
