@@ -43,15 +43,20 @@ const History = () => {
                     // Find medicines that exist in logs but are no longer in the dashboard
                     const medicinesFromLogs = [];
                     logs.forEach(log => {
-                        const exists = medicines.some(m => m._id === log.medicine || m.name === log.medicineName);
-                        const alreadyInList = medicinesFromLogs.some(m => m.name === log.medicineName);
+                        const exists = medicines.some(m => 
+                            (m._id && log.medicine && String(m._id) === String(log.medicine)) || 
+                            (m.name && log.medicineName && m.name.toLowerCase() === log.medicineName.toLowerCase())
+                        );
+                        const alreadyInList = medicinesFromLogs.some(m => 
+                            m.name.toLowerCase() === log.medicineName.toLowerCase()
+                        );
                         if (!exists && !alreadyInList) {
                             medicinesFromLogs.push({
                                 _id: log.medicine,
                                 name: log.medicineName,
                                 time: log.time,
                                 dosage: log.dosage,
-                                createdAt: log.date, // Proxy for creation date
+                                createdAt: '2000-01-01', // Set old date so it shows up for all past history
                                 isDeleted: true
                             });
                         }
@@ -79,7 +84,9 @@ const History = () => {
                             // Find log for this medicine on this date
                             const log = logs.find(l => {
                                 const logDate = new Date(l.date).toISOString().split('T')[0];
-                                return logDate === dateStr && (l.medicine === med._id || l.medicineName === med.name);
+                                const isSameMed = (l.medicine && med._id && String(l.medicine) === String(med._id)) || 
+                                                 (l.medicineName && med.name && l.medicineName.toLowerCase() === med.name.toLowerCase());
+                                return logDate === dateStr && isSameMed;
                             });
 
                             if (med.isDeleted && !log) return null;
