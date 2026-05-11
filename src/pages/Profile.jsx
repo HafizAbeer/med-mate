@@ -16,6 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { requestForToken } from "../utils/firebase-config";
+import API from "../utils/api";
 
 const Profile = () => {
   const { t, language, toggleLanguage } = useLanguage();
