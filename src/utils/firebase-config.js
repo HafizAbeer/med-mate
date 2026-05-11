@@ -15,11 +15,23 @@ export const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
+    if (!("serviceWorker" in navigator)) {
+      console.log("Service worker not supported");
+      return null;
+    }
+
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-      const currentToken = await getToken(messaging, {
-        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+      // Explicitly register the service worker for FCM
+      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
+        scope: "/firebase-cloud-messaging-push-scope"
       });
+
+      const currentToken = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+        serviceWorkerRegistration: registration
+      });
+
       if (currentToken) {
         return currentToken;
       }
