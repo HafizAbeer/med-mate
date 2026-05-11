@@ -15,13 +15,15 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { subscribeToPush, unsubscribeFromPush, checkPushSubscription } from "../utils/pushNotification";
 
 const Profile = () => {
   const { t, language, toggleLanguage } = useLanguage();
   const { user, logout, role, updateProfile, updatePassword } = useAuth();
   const navigate = useNavigate();
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [notifLoading, setNotifLoading] = useState(true);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -68,6 +70,15 @@ const Profile = () => {
 
   const profileVoiceRef = useRef({ openNameModal, openPasswordModal });
   profileVoiceRef.current = { openNameModal, openPasswordModal };
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const isSubscribed = await checkPushSubscription();
+      setNotificationsEnabled(isSubscribed);
+      setNotifLoading(false);
+    };
+    checkStatus();
+  }, []);
 
   useEffect(() => {
     const onVoice = (e) => {
@@ -147,6 +158,18 @@ const Profile = () => {
     } finally {
       setPasswordLoading(false);
     }
+  };
+
+  const handleToggleNotifications = async () => {
+    setNotifLoading(true);
+    if (notificationsEnabled) {
+      const success = await unsubscribeFromPush();
+      if (success) setNotificationsEnabled(false);
+    } else {
+      const success = await subscribeToPush();
+      if (success) setNotificationsEnabled(true);
+    }
+    setNotifLoading(false);
   };
 
   const handleLogout = () => {
@@ -251,7 +274,7 @@ const Profile = () => {
           icon={Bell}
           label={t.profileNotifications}
           isToggle
-          onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+          onClick={handleToggleNotifications}
         />
         <MenuItem
           icon={Shield}

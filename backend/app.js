@@ -36,6 +36,7 @@ const medicine = require('./routes/medicineRoutes');
 const caretaker = require('./routes/caretakerRoutes');
 const ai = require('./routes/aiRoutes');
 const admin = require('./routes/adminRoutes');
+const notifications = require('./routes/notificationRoutes');
 
 // Ensure database connection before routing requests (Crucial for Vercel Serverless)
 app.use(async (req, res, next) => {
@@ -48,6 +49,7 @@ app.use('/api/medicine', medicine);
 app.use('/api/caretaker', caretaker);
 app.use('/api/ai', ai);
 app.use('/api/admin', admin);
+app.use('/api/notifications', notifications);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ ok: true, service: 'med-mate-api' });
