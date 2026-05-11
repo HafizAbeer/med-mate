@@ -6,6 +6,7 @@ import API from "../utils/api";
 import { formatTime } from "../utils/formatTime";
 import { useSearchParams } from "react-router-dom";
 import { Pill, Activity, User, Phone, Calendar, Plus, Trash2 } from "lucide-react";
+import DeleteModal from "../components/DeleteModal";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import {
   countryList,
@@ -32,6 +33,7 @@ const CaretakerDashboard = () => {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
 
   const [patientForm, setPatientForm] = useState(emptyPatientForm);
   const [selectedCountry, setSelectedCountry] = useState(
@@ -186,8 +188,12 @@ const CaretakerDashboard = () => {
     }
   };
 
-  const handleDeleteMedicine = async (id) => {
-    if (!window.confirm(t.deleteConfirm || "Are you sure?")) return;
+  const handleDeleteMedicine = async (id, name) => {
+    setDeleteModal({ isOpen: true, id, name });
+  };
+
+  const confirmDelete = async () => {
+    const { id } = deleteModal;
     try {
       const response = await API.delete(`/medicine/${id}`);
       if (response.data.success) {
@@ -520,7 +526,7 @@ const CaretakerDashboard = () => {
                 </div>
 
                 <button
-                  onClick={() => handleDeleteMedicine(med._id)}
+                  onClick={() => handleDeleteMedicine(med._id, med.name)}
                   className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                   title={t.deleteMedicine}
                 >
@@ -538,6 +544,12 @@ const CaretakerDashboard = () => {
           )}
         </div>
       </div>
+      <DeleteModal 
+        isOpen={deleteModal.isOpen} 
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={confirmDelete}
+        itemName={deleteModal.name}
+      />
     </div>
   );
 };

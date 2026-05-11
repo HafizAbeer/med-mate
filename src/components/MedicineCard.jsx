@@ -59,9 +59,7 @@ const MedicineCard = ({ medicine, onTake, onDelete }) => {
       <div className="flex items-center gap-3">
         <button
           onClick={() => {
-            if (window.confirm(t.deleteConfirm || "Are you sure you want to delete this medicine?")) {
-              onDelete(medicine._id);
-            }
+            onDelete(medicine._id, medicine.name);
           }}
           className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
           title={t.deleteMedicine || "Delete Medicine"}

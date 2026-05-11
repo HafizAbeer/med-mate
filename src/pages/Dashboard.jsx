@@ -5,12 +5,14 @@ import API from "../utils/api";
 import MedicineCard from "../components/MedicineCard";
 import { formatTime } from "../utils/formatTime";
 import { CalendarDays, Bell, User } from "lucide-react";
+import DeleteModal from "../components/DeleteModal";
 
 const Dashboard = () => {
   const { t, language } = useLanguage();
   const { user } = useAuth();
   const [medicines, setMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
 
   useEffect(() => {
     const fetchMedicines = async () => {
@@ -47,7 +49,12 @@ const Dashboard = () => {
     }
   };
   
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, name) => {
+    setDeleteModal({ isOpen: true, id, name });
+  };
+
+  const confirmDelete = async () => {
+    const { id } = deleteModal;
     try {
       const response = await API.delete(`/medicine/${id}`);
       if (response.data.success) {
@@ -133,6 +140,13 @@ const Dashboard = () => {
           </div>
         </section>
       )}
+
+      <DeleteModal 
+        isOpen={deleteModal.isOpen} 
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={confirmDelete}
+        itemName={deleteModal.name}
+      />
     </div>
   );
 };
