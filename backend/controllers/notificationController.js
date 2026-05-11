@@ -1,6 +1,13 @@
 const User = require('../models/User');
 const webpush = require('web-push');
 
+// Setup web-push
+webpush.setVapidDetails(
+    'mailto:hafizabeer15@gmail.com',
+    process.env.PUBLIC_VAPID_KEY,
+    process.env.PRIVATE_VAPID_KEY
+);
+
 // @desc    Send test notification
 // @route   POST /api/notifications/test
 // @access  Private
