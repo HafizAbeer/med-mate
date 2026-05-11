@@ -253,8 +253,9 @@ export const LanguageProvider = ({ children }) => {
             resetCodeLabel: 'Reset code',
             resetPasswordBtn: 'Reset password',
             invalidResetCode: 'Invalid or expired code',
-            today: 'Today',
             yesterday: 'Yesterday',
+            deleteMedicine: 'Delete Medicine',
+            deleteConfirm: 'Are you sure you want to delete this medicine?',
         },
         ur: {
             appName: 'میڈ میٹ',
@@ -472,8 +473,9 @@ export const LanguageProvider = ({ children }) => {
             resetCodeLabel: 'ری سیٹ کوڈ',
             resetPasswordBtn: 'پاس ورڈ ری سیٹ',
             invalidResetCode: 'کوڈ غلط یا ختم',
-            today: 'آج',
             yesterday: 'کل',
+            deleteMedicine: 'دوا ختم کریں',
+            deleteConfirm: 'کیا آپ واقعی یہ دوا ختم کرنا چاہتے ہیں؟',
         },
     };
 

@@ -1,11 +1,11 @@
 import React from "react";
-import { Clock, CheckCircle, AlertCircle, Pill, Volume2 } from "lucide-react";
+import { Clock, CheckCircle, AlertCircle, Pill, Volume2, Trash2 } from "lucide-react";
 import clsx from "clsx";
 import { useLanguage } from "../context/LanguageContext";
 import { formatTime } from "../utils/formatTime";
 import { useVoice } from "../context/VoiceContext";
 
-const MedicineCard = ({ medicine, onTake }) => {
+const MedicineCard = ({ medicine, onTake, onDelete }) => {
   const { t, language } = useLanguage();
   const { speak } = useVoice();
 
@@ -57,6 +57,18 @@ const MedicineCard = ({ medicine, onTake }) => {
       </div>
 
       <div className="flex items-center gap-3">
+        <button
+          onClick={() => {
+            if (window.confirm(t.deleteConfirm || "Are you sure you want to delete this medicine?")) {
+              onDelete(medicine._id);
+            }
+          }}
+          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+          title={t.deleteMedicine || "Delete Medicine"}
+        >
+          <Trash2 size={20} />
+        </button>
+
         <button
           onClick={() => {
             if (language === "ur") {

@@ -5,7 +5,7 @@ import { useLanguage } from "../context/LanguageContext";
 import API from "../utils/api";
 import { formatTime } from "../utils/formatTime";
 import { useSearchParams } from "react-router-dom";
-import { Pill, Activity, User, Phone, Calendar, Plus } from "lucide-react";
+import { Pill, Activity, User, Phone, Calendar, Plus, Trash2 } from "lucide-react";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import {
   countryList,
@@ -183,6 +183,18 @@ const CaretakerDashboard = () => {
       });
     } finally {
       setAddLoading(false);
+    }
+  };
+
+  const handleDeleteMedicine = async (id) => {
+    if (!window.confirm(t.deleteConfirm || "Are you sure?")) return;
+    try {
+      const response = await API.delete(`/medicine/${id}`);
+      if (response.data.success) {
+        setMedicines((prev) => prev.filter((m) => m._id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting medicine:", error);
     }
   };
 
@@ -506,6 +518,14 @@ const CaretakerDashboard = () => {
                 >
                   {med.status}
                 </div>
+
+                <button
+                  onClick={() => handleDeleteMedicine(med._id)}
+                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                  title={t.deleteMedicine}
+                >
+                  <Trash2 size={20} />
+                </button>
               </div>
             ))
           ) : (

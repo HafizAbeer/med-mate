@@ -46,6 +46,17 @@ const Dashboard = () => {
       console.error("Error updating medicine status:", error);
     }
   };
+  
+  const handleDelete = async (id) => {
+    try {
+      const response = await API.delete(`/medicine/${id}`);
+      if (response.data.success) {
+        setMedicines((prev) => prev.filter((m) => m._id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting medicine:", error);
+    }
+  };
 
   const upcomingMeds = medicines.filter((m) => m.status === "pending");
   const otherMeds = medicines.filter((m) => m.status !== "pending");
@@ -99,7 +110,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 gap-4">
           {upcomingMeds.length > 0 ? (
             upcomingMeds.map((med) => (
-              <MedicineCard key={med._id} medicine={med} onTake={handleTake} />
+              <MedicineCard key={med._id} medicine={med} onTake={handleTake} onDelete={handleDelete} />
             ))
           ) : (
             <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-slate-500">
@@ -117,7 +128,7 @@ const Dashboard = () => {
           </h2>
           <div className="grid grid-cols-1 gap-4 opacity-80">
             {otherMeds.map((med) => (
-              <MedicineCard key={med._id} medicine={med} onTake={handleTake} />
+              <MedicineCard key={med._id} medicine={med} onTake={handleTake} onDelete={handleDelete} />
             ))}
           </div>
         </section>
