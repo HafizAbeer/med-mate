@@ -40,6 +40,25 @@ const History = () => {
                     const medicines = medsRes.data.data;
                     const logs = logsRes.data.data;
 
+                    // Find medicines that exist in logs but are no longer in the dashboard
+                    const medicinesFromLogs = [];
+                    logs.forEach(log => {
+                        const exists = medicines.some(m => m._id === log.medicine || m.name === log.medicineName);
+                        const alreadyInList = medicinesFromLogs.some(m => m.name === log.medicineName);
+                        if (!exists && !alreadyInList) {
+                            medicinesFromLogs.push({
+                                _id: log.medicine,
+                                name: log.medicineName,
+                                time: log.time,
+                                dosage: log.dosage,
+                                createdAt: log.date, // Proxy for creation date
+                                isDeleted: true
+                            });
+                        }
+                    });
+
+                    const allMeds = [...medicines, ...medicinesFromLogs];
+
                     // Generate history for the last 7 days
                     const days = [];
                     for (let i = 0; i < 7; i++) {
@@ -49,7 +68,7 @@ const History = () => {
                     }
 
                     const formattedHistory = days.map((dateStr, idx) => {
-                        const medsForDay = medicines.map(med => {
+                        const medsForDay = allMeds.map(med => {
                             // Check if this medicine existed on this date (based on createdAt)
                             const createdDate = new Date(med.createdAt).toISOString().split('T')[0];
                             if (createdDate > dateStr) return null;
@@ -62,6 +81,8 @@ const History = () => {
                                 const logDate = new Date(l.date).toISOString().split('T')[0];
                                 return logDate === dateStr && (l.medicine === med._id || l.medicineName === med.name);
                             });
+
+                            if (med.isDeleted && !log) return null;
 
                             return {
                                 name: med.name,

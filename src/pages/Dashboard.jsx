@@ -14,16 +14,31 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
 
+  const isTimePassed = (scheduledTime) => {
+    const [hours, minutes] = scheduledTime.split(':').map(Number);
+    const now = new Date();
+    const scheduled = new Date();
+    scheduled.setHours(hours, minutes, 0, 0);
+    return now >= scheduled;
+  };
+
   useEffect(() => {
     const fetchMedicines = async () => {
       try {
         const response = await API.get("/medicine");
         if (response.data.success) {
           // Normalize status from backend 'Taken' to frontend 'taken' if needed
-          const normalizedMeds = response.data.data.map(med => ({
-            ...med,
-            status: med.status.toLowerCase()
-          }));
+          const normalizedMeds = response.data.data.map(med => {
+            let status = med.status.toLowerCase();
+            // If it's pending but time has passed, treat it as missed on frontend
+            if (status === 'pending' && isTimePassed(med.time)) {
+              status = 'missed';
+            }
+            return {
+              ...med,
+              status
+            };
+          });
           setMedicines(normalizedMeds);
         }
       } catch (error) {
