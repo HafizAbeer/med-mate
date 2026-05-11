@@ -1,4 +1,33 @@
 const User = require('../models/User');
+const webpush = require('web-push');
+
+// @desc    Send test notification
+// @route   POST /api/notifications/test
+// @access  Private
+exports.sendTestNotification = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user || !user.pushSubscriptions.length) {
+            return res.status(400).json({ success: false, message: 'No subscriptions found' });
+        }
+
+        const payload = JSON.stringify({
+            title: 'Test Notification',
+            body: 'Mubarak ho! Aapki notifications sahi kaam kar rahi hain. ✅',
+            icon: '/pwa-192x192.png'
+        });
+
+        // Send to all subscriptions
+        for (const sub of user.pushSubscriptions) {
+            await webpush.sendNotification(sub, payload);
+        }
+
+        res.status(200).json({ success: true, message: 'Test notification sent' });
+    } catch (error) {
+        console.error('Test notification error:', error);
+        res.status(500).json({ success: false, message: 'Failed to send test notification' });
+    }
+};
 
 // @desc    Subscribe to push notifications
 // @route   POST /api/notifications/subscribe

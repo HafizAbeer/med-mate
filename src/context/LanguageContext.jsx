@@ -256,6 +256,9 @@ export const LanguageProvider = ({ children }) => {
             yesterday: 'Yesterday',
             deleteMedicine: 'Delete Medicine',
             deleteConfirm: 'Are you sure you want to delete this medicine?',
+            deleteMedConfirm: "Are you sure you want to delete this medicine? This will also remove its history records.",
+            testNotification: "Test Notification",
+            testNotificationSent: "Test notification sent!",
         },
         ur: {
             appName: 'میڈ میٹ',
@@ -476,6 +479,9 @@ export const LanguageProvider = ({ children }) => {
             yesterday: 'کل',
             deleteMedicine: 'دوا ختم کریں',
             deleteConfirm: 'کیا آپ واقعی یہ دوا ختم کرنا چاہتے ہیں؟',
+            deleteMedConfirm: "کیا آپ واقعی یہ دوا حذف کرنا چاہتے ہیں؟ اس سے اس کی تمام ہسٹری بھی ختم ہو جائے گی۔",
+            testNotification: "ٹیسٹ نوٹیفکیشن",
+            testNotificationSent: "ٹیسٹ نوٹیفکیشن بھیج دیا گیا!",
         },
     };
 

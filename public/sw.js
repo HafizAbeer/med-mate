@@ -1,5 +1,13 @@
 self.addEventListener('push', (event) => {
-    const data = event.data.json();
+    let data = {};
+    try {
+        data = event.data.json();
+    } catch (e) {
+        data = { 
+            title: 'Med-Mate Reminder', 
+            body: event.data ? event.data.text() : 'It is time for your medicine!' 
+        };
+    }
     console.log('Push received:', data);
 
     const options = {

@@ -82,18 +82,28 @@ const initPushScheduler = () => {
 };
 
 const sendNotification = async (user, payload) => {
-    if (!user || !user.pushSubscriptions || user.pushSubscriptions.length === 0) return;
+    if (!user) {
+        console.log('No user provided to sendNotification');
+        return;
+    }
+    if (!user.pushSubscriptions || user.pushSubscriptions.length === 0) {
+        console.log(`User ${user.name || user._id} has no push subscriptions`);
+        return;
+    }
 
+    console.log(`Attempting to send notification to ${user.name} (${user.pushSubscriptions.length} devices)`);
     const notificationPayload = JSON.stringify(payload);
 
     const subscriptions = [...user.pushSubscriptions];
     for (const sub of subscriptions) {
         try {
             await webpush.sendNotification(sub, notificationPayload);
+            console.log(`Successfully sent notification to device: ${sub.endpoint.substring(0, 30)}...`);
         } catch (error) {
-            console.error(`Error sending notification to user ${user._id}:`, error.message);
+            console.error(`Error sending notification to device:`, error.message);
             // If subscription is expired/invalid, remove it
             if (error.statusCode === 410 || error.statusCode === 404) {
+                console.log('Subscription expired, removing...');
                 user.pushSubscriptions = user.pushSubscriptions.filter(s => s.endpoint !== sub.endpoint);
                 await user.save();
             }

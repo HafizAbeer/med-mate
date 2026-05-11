@@ -176,6 +176,17 @@ const Profile = () => {
     setNotifLoading(false);
   };
 
+  const handleTestNotification = async () => {
+    try {
+      const res = await API.post("/notifications/test");
+      if (res.data.success) {
+        showLanguageToast(t.testNotificationSent || "Test notification sent!");
+      }
+    } catch (err) {
+      showLanguageToast(err.response?.data?.message || "Failed to send test");
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -189,9 +200,8 @@ const Profile = () => {
       className="w-full flex items-center justify-between p-5 hover:bg-white/40 transition-all duration-300 group rounded-2xl mb-2 last:mb-0 text-left"
     >
       <div className="flex items-center gap-4">
-        <div className={`p-3 rounded-xl shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3 ${
-          isToggle && !notificationsEnabled ? "bg-slate-100 text-slate-400" : "bg-white/50 text-primary-600"
-        }`}>
+        <div className={`p-3 rounded-xl shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3 ${isToggle && !notificationsEnabled ? "bg-slate-100 text-slate-400" : "bg-white/50 text-primary-600"
+          }`}>
           <Icon size={22} />
         </div>
         <span className="font-semibold text-slate-700 tracking-tight">{label}</span>
@@ -202,9 +212,8 @@ const Profile = () => {
         )}
         {isToggle ? (
           <div
-            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 relative ${
-              notificationsEnabled ? "bg-primary-500" : "bg-slate-300"
-            } ${notifLoading ? "opacity-50 pointer-events-none" : ""}`}
+            className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 relative ${notificationsEnabled ? "bg-primary-500" : "bg-slate-300"
+              } ${notifLoading ? "opacity-50 pointer-events-none" : ""}`}
           >
             {notifLoading ? (
               <Loader2 size={12} className="text-white animate-spin absolute inset-0 m-auto" />
@@ -291,6 +300,13 @@ const Profile = () => {
           label={t.profilePrivacySecurity}
           onClick={() => setShowPrivacyModal(true)}
         />
+        {notificationsEnabled && (
+          <MenuItem
+            icon={Bell}
+            label={t.testNotification || "Test Notification"}
+            onClick={handleTestNotification}
+          />
+        )}
       </motion.div>
 
       {/* Logout */}
