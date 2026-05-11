@@ -75,6 +75,7 @@ const Profile = () => {
   useEffect(() => {
     const isEnabled = localStorage.getItem("fcm_enabled") === "true";
     setNotificationsEnabled(isEnabled);
+    setNotifLoading(false); // Stop loading on mount
   }, []);
 
   useEffect(() => {
@@ -158,27 +159,34 @@ const Profile = () => {
   };
 
   const handleToggleNotifications = async () => {
-    if (!("Notification" in window)) {
-      showLanguageToast("This browser does not support desktop notifications");
-      return;
-    }
+    if (notifLoading) return;
     setNotifLoading(true);
-    if (notificationsEnabled) {
-      // For simplicity, we just toggle UI. In production, you'd store the token to unsubscribe.
-      setNotificationsEnabled(false);
-      localStorage.removeItem("fcm_enabled");
-    } else {
-      const token = await requestForToken();
-      if (token) {
-        await API.post("/notifications/subscribe", { token });
-        setNotificationsEnabled(true);
-        localStorage.setItem("fcm_enabled", "true");
-        showLanguageToast(t.notificationsEnabled || "Notifications enabled!");
-      } else {
-        showLanguageToast("Failed to get notification token");
+    try {
+      if (!("Notification" in window)) {
+        showLanguageToast("This browser does not support desktop notifications");
+        return;
       }
+      if (notificationsEnabled) {
+        // For simplicity, we just toggle UI. In production, you'd store the token to unsubscribe.
+        setNotificationsEnabled(false);
+        localStorage.removeItem("fcm_enabled");
+      } else {
+        const token = await requestForToken();
+        if (token) {
+          await API.post("/notifications/subscribe", { token });
+          setNotificationsEnabled(true);
+          localStorage.setItem("fcm_enabled", "true");
+          showLanguageToast(t.notificationsEnabled || "Notifications enabled!");
+        } else {
+          showLanguageToast("Failed to get notification token");
+        }
+      }
+    } catch (error) {
+      console.error("Notification toggle error:", error);
+      showLanguageToast("Error updating notification settings");
+    } finally {
+      setNotifLoading(false);
     }
-    setNotifLoading(false);
   };
 
   const handleTestNotification = async () => {
