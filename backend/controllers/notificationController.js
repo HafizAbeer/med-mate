@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const webpush = require('web-push');
+const { checkAndSendNotifications } = require('../utils/pushScheduler');
 
 // Setup web-push
 webpush.setVapidDetails(
@@ -7,6 +8,19 @@ webpush.setVapidDetails(
     process.env.PUBLIC_VAPID_KEY,
     process.env.PRIVATE_VAPID_KEY
 );
+
+// @desc    Trigger reminders manually (for Vercel Cron)
+// @route   GET /api/notifications/trigger-reminders
+// @access  Public (Should be protected by a secret key in production)
+exports.triggerReminders = async (req, res) => {
+    try {
+        await checkAndSendNotifications();
+        res.status(200).json({ success: true, message: 'Reminders triggered' });
+    } catch (error) {
+        console.error('Trigger error:', error);
+        res.status(500).json({ success: false, message: 'Trigger failed' });
+    }
+};
 
 // @desc    Send test notification
 // @route   POST /api/notifications/test
