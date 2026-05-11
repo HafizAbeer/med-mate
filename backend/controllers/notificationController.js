@@ -8,25 +8,30 @@ const { sendFCMNotification } = require('../utils/fcm');
 // @access  Public
 exports.triggerReminders = async (req, res) => {
     try {
+        // Get current time in Pakistan Timezone (PKT - UTC+5)
         const now = new Date();
-        // Vercel server might be in UTC, so we should consider timezone or use a simple HH:mm check
-        // For now, assuming server time is what user expects or adjusted
-        const currentHours = String(now.getHours()).padStart(2, '0');
-        const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+        const pktTime = new Date(now.getTime() + (5 * 60 + 0) * 60000); // Manually adjust to UTC+5
+        
+        const currentHours = String(pktTime.getUTCHours()).padStart(2, '0');
+        const currentMinutes = String(pktTime.getUTCMinutes()).padStart(2, '0');
         const currentTime = `${currentHours}:${currentMinutes}`;
 
-        // Calculate 15 minutes from now
-        const fifteenMinsLater = new Date(now.getTime() + 15 * 60000);
-        const laterHours = String(fifteenMinsLater.getHours()).padStart(2, '0');
-        const laterMinutes = String(fifteenMinsLater.getMinutes()).padStart(2, '0');
+        // Calculate 15 minutes from now in PKT
+        const fifteenMinsLater = new Date(pktTime.getTime() + 15 * 60000);
+        const laterHours = String(fifteenMinsLater.getUTCHours()).padStart(2, '0');
+        const laterMinutes = String(fifteenMinsLater.getUTCMinutes()).padStart(2, '0');
         const reminderTime = `${laterHours}:${laterMinutes}`;
 
-        console.log(`Checking reminders for Time: ${currentTime}, ReminderTime: ${reminderTime}`);
+        console.log(`[Cron] UTC Time: ${now.toISOString()}`);
+        console.log(`[Cron] PKT Time: ${currentTime}, ReminderTime: ${reminderTime}`);
 
         // 1. Exact Time Reminders
         const exactMeds = await Medicine.find({ time: currentTime }).populate('user');
+        console.log(`[Cron] Found ${exactMeds.length} medicines for ${currentTime}`);
+        
         for (const med of exactMeds) {
             if (med.user && med.user.fcmTokens && med.user.fcmTokens.length > 0) {
+                console.log(`[Cron] Sending notification to ${med.user.name} for ${med.name}`);
                 await sendFCMNotification(med.user.fcmTokens, {
                     title: 'Time for Medicine!',
                     body: `It's time to take ${med.name} (${med.dosage}).`,
@@ -46,15 +51,15 @@ exports.triggerReminders = async (req, res) => {
         }
 
         // 3. Missed Dose Check (5 mins after time)
-        const fiveMinsAgo = new Date(now.getTime() - 5 * 60000);
-        const pastHours = String(fiveMinsAgo.getHours()).padStart(2, '0');
-        const pastMinutes = String(fiveMinsAgo.getMinutes()).padStart(2, '0');
+        const fiveMinsAgo = new Date(pktTime.getTime() - 5 * 60000);
+        const pastHours = String(fiveMinsAgo.getUTCHours()).padStart(2, '0');
+        const pastMinutes = String(fiveMinsAgo.getUTCMinutes()).padStart(2, '0');
         const missedTime = `${pastHours}:${pastMinutes}`;
 
         const potentiallyMissed = await Medicine.find({ time: missedTime }).populate('user');
         for (const med of potentiallyMissed) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const today = new Date(pktTime);
+            today.setUTCHours(0, 0, 0, 0);
             
             const log = await MedicineLog.findOne({
                 $or: [{ medicine: med._id }, { medicineName: med.name }],
@@ -70,16 +75,14 @@ exports.triggerReminders = async (req, res) => {
             }
         }
 
-        res.status(200).json({ success: true, message: 'FCM Reminders processed' });
+        res.status(200).json({ success: true, currentTime, reminderTime });
     } catch (error) {
-        console.error('Trigger error:', error);
+        console.error('[Cron Error]:', error);
         res.status(500).json({ success: false, message: 'Trigger failed' });
     }
 };
 
-// ... (Rest of the controller functions: sendTestNotification, subscribe, unsubscribe)
-// I'll rewrite them to ensure the whole file is updated correctly.
-
+// @desc    Send test FCM notification
 exports.sendTestNotification = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -99,6 +102,7 @@ exports.sendTestNotification = async (req, res) => {
     }
 };
 
+// @desc    Subscribe to FCM notifications
 exports.subscribe = async (req, res) => {
     try {
         const { token } = req.body;
@@ -111,10 +115,12 @@ exports.subscribe = async (req, res) => {
         }
         res.status(201).json({ success: true, message: 'Subscribed' });
     } catch (error) {
+        console.error('Subscription error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
+// @desc    Unsubscribe from FCM notifications
 exports.unsubscribe = async (req, res) => {
     try {
         const { token } = req.body;
