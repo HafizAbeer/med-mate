@@ -135,7 +135,7 @@ const Layout = () => {
 
             {/* Main Content */}
             <main className={clsx(
-                "flex-1 p-4 md:p-8 pb-24 md:pb-8 transition-all duration-300",
+                "flex-1 p-4 md:p-8 pb-24 md:pb-8 transition-all duration-300 max-w-full overflow-x-hidden",
                 language === 'ur' ? "md:mr-[18rem]" : "md:ml-[18rem]"
             )}>
                 <div className="max-w-5xl mx-auto">

@@ -31,13 +31,15 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-slate-50 text-slate-900 overflow-x-hidden;
     background-image:
       radial-gradient(at 0% 0%, hsla(175, 76%, 85%, 0.3) 0px, transparent 50%),
       radial-gradient(at 100% 0%, hsla(214, 94%, 90%, 0.3) 0px, transparent 50%),
       radial-gradient(at 100% 100%, hsla(175, 76%, 85%, 0.3) 0px, transparent 50%),
       radial-gradient(at 0% 100%, hsla(214, 94%, 90%, 0.3) 0px, transparent 50%);
     background-attachment: fixed;
+    width: 100%;
+    position: relative;
   }
 }
 

@@ -245,7 +245,7 @@ const Profile = () => {
   );
 
   return (
-    <div className="animate-fade-in-up pb-12 relative">
+    <div className="animate-fade-in-up pb-12 relative overflow-x-hidden">
       <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary-100/30 blur-3xl rounded-full -z-10" />
 
       <h1 className="text-3xl font-black text-slate-800 mb-8 tracking-tighter">
@@ -256,20 +256,22 @@ const Profile = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass p-8 rounded-[2rem] flex items-center gap-6 mb-8 hover:shadow-xl transition-shadow duration-500 group"
+        className="glass p-5 sm:p-8 rounded-[2rem] flex items-center gap-4 sm:gap-6 mb-8 hover:shadow-xl transition-shadow duration-500 group"
       >
-        <div className="relative">
-          <div className="w-20 h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-lg transform group-hover:rotate-6 transition-transform">
+        <div className="relative shrink-0">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl sm:text-3xl shadow-lg transform group-hover:rotate-6 transition-transform">
             {user?.name?.charAt(0) || "U"}
           </div>
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-secondary-500 border-4 border-white rounded-full shadow-sm" />
+          <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-secondary-500 border-4 border-white rounded-full shadow-sm" />
         </div>
-        <div>
-          <h2 className="text-2xl font-extrabold text-slate-800 leading-tight">
+        <div className="min-w-0">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 leading-tight truncate">
             <span className="text-gradient">{user?.name || t.dashboardGuestUser}</span>
           </h2>
-          <p className="text-slate-500 font-medium">{user?.email || t.noEmailProvided}</p>
-          <p className="text-xs font-bold text-primary-600 uppercase tracking-wider mt-2">
+          <p className="text-sm sm:text-base text-slate-500 font-medium truncate" title={user?.email}>
+            {user?.email || t.noEmailProvided}
+          </p>
+          <p className="text-[10px] sm:text-xs font-bold text-primary-600 uppercase tracking-wider mt-2">
             {role === "admin" ? t.roleAdmin : role === "caretaker" ? t.roleCaretaker : t.rolePatient}
           </p>
         </div>
