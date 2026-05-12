@@ -16,7 +16,7 @@ const MedicineCard = ({ medicine, onTake, onDelete }) => {
   return (
     <div
       className={clsx(
-        "relative p-5 rounded-2xl transition-all flex items-center justify-between group",
+        "relative p-4 sm:p-5 rounded-2xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group",
         isTaken
           ? "bg-emerald-50/50 border border-emerald-200"
           : isMissed
@@ -27,7 +27,7 @@ const MedicineCard = ({ medicine, onTake, onDelete }) => {
       <div className="flex items-center gap-4">
         <div
           className={clsx(
-            "p-3.5 rounded-2xl transition-colors",
+            "p-3 rounded-xl sm:p-3.5 sm:rounded-2xl transition-colors shrink-0",
             isTaken
               ? "bg-emerald-100 text-emerald-600"
               : isMissed
@@ -35,28 +35,30 @@ const MedicineCard = ({ medicine, onTake, onDelete }) => {
                 : "bg-primary-50 text-primary-600 group-hover:bg-primary-100"
           )}
         >
-          <Pill size={28} />
+          <Pill size={24} className="sm:w-[28px] sm:h-[28px]" />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h3
             className={clsx(
-              "text-lg font-bold",
+              "text-base sm:text-lg font-bold truncate",
               isTaken ? "text-emerald-900" : "text-slate-800"
             )}
           >
             {medicine.name}
           </h3>
-          <div className="flex items-center gap-2 text-slate-500 mt-1.5 text-sm font-medium">
-            <Clock size={16} className="text-primary-500" />
-            <span>{formatTime(medicine.time)}</span>
-            <span className="text-slate-400 px-1">•</span>
-            <span>{medicine.dosage}</span>
+          <div className="flex items-center gap-2 text-slate-500 mt-1 text-xs sm:text-sm font-medium flex-wrap">
+            <div className="flex items-center gap-1.5">
+              <Clock size={14} className="text-primary-500 sm:w-[16px] sm:h-[16px]" />
+              <span>{formatTime(medicine.time)}</span>
+            </div>
+            <span className="text-slate-300 hidden sm:inline">•</span>
+            <span className="bg-slate-50 sm:bg-transparent px-2 py-0.5 sm:p-0 rounded text-[10px] sm:text-sm">{medicine.dosage}</span>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto border-t sm:border-t-0 border-slate-100/60 pt-3 sm:pt-0">
         <button
           onClick={() => {
             onDelete(medicine._id, medicine.name);
@@ -64,7 +66,7 @@ const MedicineCard = ({ medicine, onTake, onDelete }) => {
           className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
           title={t.deleteMedicine || "Delete Medicine"}
         >
-          <Trash2 size={20} />
+          <Trash2 size={18} className="sm:w-[20px] sm:h-[20px]" />
         </button>
 
         <button
@@ -84,23 +86,23 @@ const MedicineCard = ({ medicine, onTake, onDelete }) => {
           className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors"
           title={t.medicineCardReadAloud}
         >
-          <Volume2 size={20} />
+          <Volume2 size={18} className="sm:w-[20px] sm:h-[20px]" />
         </button>
 
         {isTaken ? (
-          <div className="flex items-center gap-2 text-emerald-600 font-bold bg-white px-3 py-1.5 rounded-lg shadow-sm border border-emerald-100">
-            <CheckCircle size={20} />
+          <div className="flex items-center gap-2 text-emerald-600 font-bold bg-white px-3 py-1.5 rounded-lg shadow-sm border border-emerald-100 text-xs sm:text-sm">
+            <CheckCircle size={18} className="sm:w-[20px] sm:h-[20px]" />
             <span>{t.taken}</span>
           </div>
         ) : isMissed ? (
-          <div className="flex items-center gap-2 text-red-600 font-bold bg-white px-3 py-1.5 rounded-lg shadow-sm border border-red-100">
-            <AlertCircle size={20} />
+          <div className="flex items-center gap-2 text-red-600 font-bold bg-white px-3 py-1.5 rounded-lg shadow-sm border border-red-100 text-xs sm:text-sm">
+            <AlertCircle size={18} className="sm:w-[20px] sm:h-[20px]" />
             <span>{t.missed}</span>
           </div>
         ) : (
           <button
             onClick={() => onTake(medicine._id)}
-            className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-md shadow-primary-200 transition-colors active:scale-95"
+            className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-md shadow-primary-200 transition-colors active:scale-95 text-xs sm:text-base"
           >
             {t.takeAction}
           </button>
